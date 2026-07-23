@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>SalesCoach — 리포트 목업 v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0E0E; --surface:#1A1A1A; --surface-raised:#242424; --line:#333333;
+  --text-primary:#F2F2F2; --text-secondary:#A3A3A3; --text-tertiary:#6E6E6E;
+  --pink:#E23F8C; --blue:#2E9BE6; --orange:#F0932B; --yellow:#C7D92B;
+  --pink-soft:#331520; --blue-soft:#132433; --orange-soft:#332411; --yellow-soft:#2A2E12;
+  --accent:var(--blue); --accent-soft:var(--blue-soft);
+  --danger:#C0392B; --danger-soft:#2E1815;
+  --success:#3F9D57; --success-soft:#152A19;
+  --gray-swatch-1:#8C8C8C; --gray-swatch-2:#6E6E6E; --gray-swatch-3:#525252;
+}
+body[data-theme="light"]{
+  --bg:#FFFFFF; --surface:#F7F7F7; --surface-raised:#EFEFEF; --line:#E0E0E0;
+  --text-primary:#141414; --text-secondary:#5C5C5C; --text-tertiary:#8C8C8C;
+  --pink-soft:#FCE7F0; --blue-soft:#E7F2FC; --orange-soft:#FCEEDE; --yellow-soft:#F5F8DC;
+  --danger-soft:#FBEAE8; --success-soft:#E7F4EA;
+  --gray-swatch-1:#C2C2C2; --gray-swatch-2:#A0A0A0; --gray-swatch-3:#7C7C7C;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text-primary);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;transition:background .15s,color .15s;}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px;}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;}
+.masthead{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:34px;height:34px;border-radius:8px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+.brand h1{font-size:20px;font-weight:600;letter-spacing:-0.01em;}
+.brand .sub{font-size:12px;color:var(--text-tertiary);margin-top:1px;}
+.masthead-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.date-badge{font-size:12px;color:var(--text-secondary);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;}
+.icon-btn{width:34px;height:34px;border-radius:6px;background:var(--surface);border:1px solid var(--line);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.icon-btn svg{width:16px;height:16px;}
+.dl-btn{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;color:var(--text-primary);}
+.dl-btn svg{width:14px;height:14px;flex-shrink:0;}
+.divider-v{width:1px;height:22px;background:var(--line);margin:0 2px;}
+.newbtn{font-size:13px;font-weight:600;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-family:'Inter',sans-serif;}
+.tabs{display:flex;gap:4px;margin-bottom:22px;border-bottom:1px solid var(--line);}
+.tab{padding:10px 16px;font-size:14px;font-weight:600;color:var(--text-tertiary);cursor:pointer;border-bottom:2px solid transparent;user-select:none;}
+.tab.active{color:var(--text-primary);border-bottom-color:var(--blue);}
+.panel{display:none;}
+.panel.active{display:block;}
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:24px;}
+.cell{background:var(--surface);padding:14px 12px;}
+.cell .lab{font-size:11px;color:var(--text-tertiary);margin-bottom:6px;}
+.cell .val{font-size:18px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+.cell .val.danger{color:var(--danger);} .cell .val.success{color:var(--success);} .cell .val.accent{color:var(--blue);}
+.section{margin-bottom:28px;}
+.section h2{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:12px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;border-left:4px solid var(--line);padding:16px 18px;margin-bottom:10px;}
+.card.sev-danger{border-left-color:var(--danger);}
+.card.sev-success{border-left-color:var(--success);}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:.02em;}
+.badge-danger{background:var(--danger-soft);color:var(--danger);}
+.badge-success{background:var(--success-soft);color:var(--success);}
+.badge-neutral{background:var(--surface-raised);color:var(--text-secondary);}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.store-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:7px;flex-shrink:0;}
+.headline-card{border-left:4px solid var(--danger);}
+.headline-card .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.headline-card h3{font-size:17px;font-weight:600;margin:10px 0 6px;line-height:1.4;}
+.headline-card p{font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin:0 0 10px;}
+.tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:11px;color:var(--text-tertiary);background:var(--surface-raised);border-radius:4px;padding:3px 8px;font-family:'IBM Plex Mono',monospace;}
+.issue-item{display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.issue-item .left{flex:1;display:flex;align-items:flex-start;}
+.issue-item .name{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;}
+.issue-item .detail{font-size:12.5px;color:var(--text-secondary);}
+.bar-track{width:110px;height:6px;background:var(--surface-raised);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.bar-fill{height:100%;border-radius:3px;}
+.bar-fill.danger{background:var(--danger);} .bar-fill.success{background:var(--success);}
+.issue-pct{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;min-width:52px;text-align:right;}
+.chart{display:flex;align-items:flex-end;gap:14px;height:180px;padding:10px 6px 0;border-bottom:1px solid var(--line);margin-bottom:8px;position:relative;}
+.chart::after{content:"";position:absolute;left:calc(50% - 7px);top:0;bottom:20px;width:1px;background:var(--line);}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.bar-val{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-secondary);margin-bottom:6px;}
+.bar-rect{width:100%;border-radius:4px 4px 0 0;}
+.bar-name{font-size:10.5px;color:var(--text-tertiary);margin-top:8px;text-align:center;line-height:1.3;}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--text-secondary);margin-bottom:18px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+.ach-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);}
+.ach-row:last-child{border-bottom:none;}
+.ach-name{width:160px;font-size:13.5px;font-weight:500;flex-shrink:0;display:flex;align-items:center;}
+.ach-track{flex:1;height:8px;background:var(--surface-raised);border-radius:4px;overflow:hidden;}
+.ach-fill{height:100%;border-radius:4px;}
+.ach-pct{width:56px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;flex-shrink:0;}
+.ach-need{width:190px;font-size:11px;color:var(--text-tertiary);flex-shrink:0;text-align:right;}
+.action-card{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:8px;}
+.action-tags{display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:96px;}
+.action-text{font-size:13.5px;line-height:1.55;color:var(--text-primary);}
+.ai-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;}
+.ai-toggle .lab{font-size:13px;font-weight:600;color:var(--text-secondary);}
+.ai-toggle .icon{font-size:12px;color:var(--text-tertiary);}
+.ai-body{display:none;padding:14px 16px;font-size:13px;line-height:1.7;color:var(--text-secondary);background:var(--surface);border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;margin-top:-1px;}
+.ai-body.open{display:block;}
+.ai-model{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-tertiary);margin-bottom:8px;}
+.empty-state{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;text-align:center;}
+.empty-state .t{font-size:14px;font-weight:600;margin-bottom:6px;}
+.empty-state .d{font-size:12.5px;color:var(--text-tertiary);}
+.trend-svg{width:100%;height:180px;}
+.assume-note{font-size:11.5px;color:var(--text-tertiary);background:var(--surface);border:1px dashed var(--line);border-radius:6px;padding:8px 12px;margin-bottom:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="brand">
+      <div class="brand-mark">SC</div>
+      <div>
+        <h1>SalesCoach</h1>
+        <div class="sub">AI 매출 분석 에이전트</div>
+      </div>
+    </div>
+    <div class="masthead-right">
+      <div class="date-badge">2025-05-21 기준</div>
+      <button class="icon-btn" id="themeToggle" title="라이트/다크 전환">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <div class="divider-v"></div>
+      <div class="dl-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>HTML</div>
+      <div class="dl-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>Excel</div>
+      <button class="newbtn">새 리포트</button>
+    </div>
+  </div>
+
+  <div class="assume-note">매장 색상은 가정치입니다 — HCC=블루, HCC Store 1=핑크, HCC Store 2=오렌지로 임시 배정. 실제 서울/부산/제주/여주 매핑 확인되면 교체 예정.</div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="brief">오늘의 브리핑</div>
+    <div class="tab" data-tab="trend">추이 분석</div>
+  </div>
+
+  <div class="panel active" data-panel="brief">
+
+    <div class="strip">
+      <div class="cell"><div class="lab">순영수증</div><div class="val">41건</div></div>
+      <div class="cell"><div class="lab">총매출</div><div class="val">6,172,000원</div></div>
+      <div class="cell"><div class="lab">총포인트</div><div class="val">158,810P</div></div>
+      <div class="cell"><div class="lab">이상치</div><div class="val danger">3건</div></div>
+      <div class="cell"><div class="lab">월누계 달성률</div><div class="val accent">84.4%</div></div>
+      <div class="cell"><div class="lab">월말 예측</div><div class="val success">111.6%</div></div>
+    </div>
+
+    <div class="section">
+      <h2>오늘의 핵심 이슈</h2>
+      <div class="card headline-card">
+        <div class="top"><span class="badge badge-danger"><span class="badge-dot"></span>심각</span><span class="tag">목표미달</span></div>
+        <h3>오늘 순매출이 조정 일별 목표의 3.4%에 불과</h3>
+        <p>조정 일별 목표 208,168,435원 대비 오늘 순매출 6,172,000원. 잔여 10일간 일평균 77,976,465원이 필요한 상태입니다.</p>
+        <div class="tags"><span class="tag">잔여 10일</span><span class="tag">일평균 필요 77,976,465원</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>이상치 3건 · 확인 필요</h2>
+      <div class="card sev-danger">
+        <div class="issue-item">
+          <div class="left"><div class="name"><span class="store-dot" style="background:var(--blue)"></span>HCC</div></div>
+          <div class="detail" style="flex:2">월 달성률 43.8% · 기준(70%) 미달 · 일평균 112,455,320원 필요</div>
+          <div class="bar-track"><div class="bar-fill danger" style="width:43.8%"></div></div>
+          <div class="issue-pct">43.8%</div>
+        </div>
+      </div>
+      <div class="card sev-danger">
+        <div class="issue-item">
+          <div class="left"><div class="name"><span class="store-dot" style="background:var(--pink)"></span>HCC Store 1</div></div>
+          <div class="detail" style="flex:2">월 달성률 29.3% · 기준(70%) 미달 · 일평균 70,722,925원 필요</div>
+          <div class="bar-track"><div class="bar-fill danger" style="width:29.3%"></div></div>
+          <div class="issue-pct">29.3%</div>
+        </div>
+      </div>
+      <div class="card sev-danger">
+        <div class="issue-item">
+          <div class="left"><div class="name"><span class="store-dot" style="background:var(--orange)"></span>HCC Store 2</div></div>
+          <div class="detail" style="flex:2">월 달성률 39.1% · 기준(70%) 미달 · 일평균 48,719,555원 필요</div>
+          <div class="bar-track"><div class="bar-fill danger" style="width:39.1%"></div></div>
+          <div class="issue-pct">39.1%</div>
+        </div>
+      </div>
+      <div class="card sev-success">
+        <div class="issue-item">
+          <div class="left"><div class="name"><span class="store-dot" style="background:var(--gray-swatch-2)"></span>메이크샵 — 목표 초과 달성</div></div>
+          <div class="detail" style="flex:2">월 달성률 112.5% · 잔여 목표 없음, 이례적 호실적</div>
+          <div class="bar-track"><div class="bar-fill success" style="width:100%"></div></div>
+          <div class="issue-pct">112.5%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>플랫폼별 매출 (당일)</h2>
+      <div class="legend">
+        <span><i style="background:var(--blue)"></i>HCC</span>
+        <span><i style="background:var(--pink)"></i>HCC Store 1</span>
+        <span><i style="background:var(--orange)"></i>HCC Store 2</span>
+        <span><i style="background:var(--gray-swatch-2)"></i>온라인 채널</span>
+      </div>
+      <div class="chart">
+        <div class="bar-col"><div class="bar-val">121.9만</div><div class="bar-rect" style="height:64%;background:var(--blue)"></div><div class="bar-name">HCC</div></div>
+        <div class="bar-col"><div class="bar-val">93.4만</div><div class="bar-rect" style="height:49%;background:var(--pink)"></div><div class="bar-name">HCC<br>Store 1</div></div>
+        <div class="bar-col"><div class="bar-val">138.4만</div><div class="bar-rect" style="height:73%;background:var(--orange)"></div><div class="bar-name">HCC<br>Store 2</div></div>
+        <div class="bar-col"><div class="bar-val">26.1만</div><div class="bar-rect" style="height:14%;background:var(--gray-swatch-1)"></div><div class="bar-name">비바리퍼블리카</div></div>
+        <div class="bar-col"><div class="bar-val">188.7만</div><div class="bar-rect" style="height:100%;background:var(--gray-swatch-2)"></div><div class="bar-name">메이크샵</div></div>
+        <div class="bar-col"><div class="bar-val">48.7만</div><div class="bar-rect" style="height:26%;background:var(--gray-swatch-3)"></div><div class="bar-name">엔에이치엔<br>페이코</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>플랫폼별 목표 달성률</h2>
+      <div class="card" style="border-left-color:var(--line);">
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--blue)"></span>HCC</div>
+          <div class="ach-track"><div class="ach-fill" style="width:43.8%;background:var(--danger)"></div></div>
+          <div class="ach-pct" style="color:var(--danger)">43.8%</div>
+          <div class="ach-need">일평균 112,455,320원 필요</div>
+        </div>
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--pink)"></span>HCC Store 1</div>
+          <div class="ach-track"><div class="ach-fill" style="width:29.3%;background:var(--danger)"></div></div>
+          <div class="ach-pct" style="color:var(--danger)">29.3%</div>
+          <div class="ach-need">일평균 70,722,925원 필요</div>
+        </div>
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--orange)"></span>HCC Store 2</div>
+          <div class="ach-track"><div class="ach-fill" style="width:39.1%;background:var(--danger)"></div></div>
+          <div class="ach-pct" style="color:var(--danger)">39.1%</div>
+          <div class="ach-need">일평균 48,719,555원 필요</div>
+        </div>
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--gray-swatch-1)"></span>비바리퍼블리카</div>
+          <div class="ach-track"><div class="ach-fill" style="width:100%;background:var(--surface-raised)"></div></div>
+          <div class="ach-pct"><span class="badge badge-neutral">목표 미설정</span></div>
+          <div class="ach-need"></div>
+        </div>
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--gray-swatch-2)"></span>메이크샵</div>
+          <div class="ach-track"><div class="ach-fill" style="width:100%;background:var(--success)"></div></div>
+          <div class="ach-pct" style="color:var(--success)">112.5%</div>
+          <div class="ach-need">잔여 목표 없음</div>
+        </div>
+        <div class="ach-row">
+          <div class="ach-name"><span class="store-dot" style="background:var(--gray-swatch-3)"></span>엔에이치엔페이코</div>
+          <div class="ach-track"><div class="ach-fill" style="width:100%;background:var(--surface-raised)"></div></div>
+          <div class="ach-pct"><span class="badge badge-neutral">목표 미설정</span></div>
+          <div class="ach-need"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>오늘 할 일</h2>
+      <div class="action-card">
+        <div class="action-tags"><span class="badge badge-danger">오늘</span><span class="tag">HCC Store1 매니저</span></div>
+        <div class="action-text">주요 고객에게 20% 할인 프로모션을 시행하고, 해당 프로모션을 SNS와 매장 내에 홍보하기.</div>
+      </div>
+      <div class="action-card">
+        <div class="action-tags"><span class="badge badge-neutral">이번 주</span><span class="tag">온라인 마케팅팀</span></div>
+        <div class="action-text">온라인 채널에서 가장 인기 있는 제품군에 대한 배너 광고를 진행하고, 해당 제품군에 한해 추가 10% 할인 쿠폰을 제공하기.</div>
+      </div>
+      <div class="action-card">
+        <div class="action-tags"><span class="badge badge-neutral">이번 달</span><span class="tag">모든 매장 관리자</span></div>
+        <div class="action-text">각 매장에서 고객 피드백을 수집하고, 그 결과를 바탕으로 특화된 프로모션을 개발하여 다음 달 조기 실행하기.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="ai-toggle" id="aiToggle">
+        <span class="lab">AI 코멘터리 전문 보기</span>
+        <span class="icon" id="aiIcon">▾</span>
+      </div>
+      <div class="ai-body" id="aiBody">
+        <div class="ai-model">GPT-4O-MINI</div>
+        오늘 매출이 조정 일별 목표의 3.4%에 불과하여 심각한 목표 미달 상태입니다. 30일 동안 매출은 상승세이나 최근 가속도가 하락하며, 특히 HCC, HCC Store 1, HCC Store 2가 각각 43.8%, 29.3%, 39.1%로 목표 미달에 직면해 있습니다. 온라인 채널의 매출 상승세는 긍정적이나, 이를 활용한 추가 프로모션이 필요합니다.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel" data-panel="trend">
+    <div class="section">
+      <h2>채널별 매출 추이 (최근 7일)</h2>
+      <svg class="trend-svg" viewBox="0 0 600 180" preserveAspectRatio="none">
+        <line x1="0" y1="150" x2="600" y2="150" stroke="var(--line)" stroke-width="1"/>
+        <polyline points="20,90 100,95 180,70 260,85 340,60 420,50 500,45" fill="none" stroke="var(--blue)" stroke-width="2.5"/>
+        <polyline points="20,130 100,115 180,120 260,95 340,100 420,80 500,70" fill="none" stroke="var(--gray-swatch-2)" stroke-width="2.5"/>
+        <text x="20" y="168" fill="var(--text-tertiary)" font-size="10" font-family="IBM Plex Mono, monospace">05-15</text>
+        <text x="480" y="168" fill="var(--text-tertiary)" font-size="10" font-family="IBM Plex Mono, monospace">05-21</text>
+      </svg>
+      <div class="legend"><span><i style="background:var(--blue)"></i>오프라인</span><span><i style="background:var(--gray-swatch-2)"></i>온라인</span></div>
+    </div>
+    <div class="section">
+      <h2>중분류·제품별 매출 TOP 10</h2>
+      <div class="empty-state">
+        <div class="t">이 리포트에서는 제공되지 않는 집계입니다</div>
+        <div class="d">현재 daily_product 집계가 일별 카테고리·제품 단위 TOP10을 지원하지 않습니다. 플랫폼별 상세는 오늘의 브리핑 탭을 확인하세요.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+document.querySelectorAll('.tab').forEach(function(tab){
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    tab.classList.add('active');
+    document.querySelector('.panel[data-panel="'+tab.dataset.tab+'"]').classList.add('active');
+  });
+});
+document.getElementById('aiToggle').addEventListener('click', function(){
+  var body = document.getElementById('aiBody');
+  var icon = document.getElementById('aiIcon');
+  body.classList.toggle('open');
+  icon.textContent = body.classList.contains('open') ? '▴' : '▾';
+});
+document.getElementById('themeToggle').addEventListener('click', function(){
+  var isLight = document.body.getAttribute('data-theme') === 'light';
+  document.body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+});
+</script>
+</body>
+</html>
